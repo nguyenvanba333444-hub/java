@@ -3,7 +3,7 @@
 ## Tài liệu nộp bài
 
 - [Báo cáo đồ án đầy đủ](docs/Bao_cao_do_an_Lap_trinh_Java_Tro_Tot_Ban_nop.docx)
-- [Trang bìa và thông tin nộp bài](docs/Trang_bia_va_thong_tin_nop_bai.docx)
+- [Trang bìa Nhóm 25](docs/Nhom_25_Trang_bia.docx)
 
 Kho mã hiện có hai backend độc lập dùng chung đề tài Trọ Tốt. **Bài Java môn học** nằm trong `src/main/java`, dùng Spring Boot/Thymeleaf/MySQL và chạy ở cổng 8080. Bản Node.js nằm ở `server.js`, dùng Express/EJS và chạy ở cổng 3000. Khi chấm Java, chạy backend Spring Boot theo mục “Chạy backend Java Spring Boot”; không gửi request CRUD Java vào cổng Node.js.
 
