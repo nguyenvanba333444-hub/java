@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer th:fragment="siteFooter" style="margin-top:48px;background:#183d2c;color:#e8f0e9;padding:28px 20px;font:14px Arial,sans-serif">
+    <div style="max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap">
+        <div>
+            <a th:href="@{/}" style="color:#fff;font-size:20px;font-weight:700;text-decoration:none">⌂ Trọ Tốt</a>
+            <p style="max-width:440px;color:#c1d2c5;line-height:1.6;margin:10px 0 0">Thông tin phòng trọ và liên hệ chủ trọ được hiển thị rõ ràng để bạn dễ tìm kiếm.</p>
+        </div>
+        <nav aria-label="Liên kết cuối trang" style="display:flex;gap:18px;flex-wrap:wrap;padding-top:5px">
+            <a th:href="@{/#danh-sach}" style="color:#e8f0e9">Tìm phòng</a>
+            <a th:href="@{/register}" style="color:#e8f0e9">Tạo tài khoản</a>
+            <a th:href="@{/login}" style="color:#e8f0e9">Đăng nhập</a>
+        </nav>
+        <small style="width:100%;border-top:1px solid #ffffff26;padding-top:14px;color:#c1d2c5">© 2026 Trọ Tốt</small>
+    </div>
+</footer>
+</body>
+</html>
+

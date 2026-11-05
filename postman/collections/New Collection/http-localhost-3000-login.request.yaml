@@ -1,0 +1,6 @@
+$kind: http-request
+name: http://localhost:3000/login
+description: "Generated from cURL: curl --location 'http://localhost:3000/api/rooms'"
+url: "{{baseUrl}}/api/rooms"
+method: GET
+order: 1000

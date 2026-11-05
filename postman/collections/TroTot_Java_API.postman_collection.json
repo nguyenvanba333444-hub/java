@@ -1,0 +1,37 @@
+{
+  "info": {
+    "_postman_id": "84d588d2-b561-4ec2-8f6b-b6199dff4319",
+    "name": "Tro Tot Java Spring API",
+    "description": "CRUD phòng và phân quyền của backend Java Spring Boot tại cổng 8080. Hãy nhập tài khoản USER/OWNER thử nghiệm vào environment, đăng nhập trước CRUD rồi xóa tin vừa tạo.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" },
+    { "key": "email", "value": "", "type": "string" },
+    { "key": "password", "value": "", "type": "string" },
+    { "key": "roomId", "value": "", "type": "string" },
+    { "key": "ownerId", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Public read and filters",
+      "item": [
+        { "name": "List rooms", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/rooms" }, "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('List returns JSON array',()=>{pm.response.to.have.status(200);pm.expect(pm.response.json()).to.be.an('array');});"] } }] },
+        { "name": "Paginated room search", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/rooms/page?page=0&size=10&city=Ho%20Chi%20Minh&minPrice=0&maxPrice=10000000&available=true" }, "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Page response contains paging metadata',()=>{pm.response.to.have.status(200);const b=pm.response.json();pm.expect(b.content).to.be.an('array');pm.expect(b.totalElements).to.be.a('number');});"] } }] },
+        { "name": "Reject invalid price range", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/rooms?minPrice=5000000&maxPrice=1000000" }, "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Invalid range returns 400',()=>pm.response.to.have.status(400));"] } }] },
+        { "name": "Unknown room is 404", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/rooms/999999999" }, "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Unknown room returns 404',()=>pm.response.to.have.status(404));"] } }] }
+      ]
+    },
+    {
+      "name": "Session and room CRUD (run in order)",
+      "item": [
+        { "name": "Login as test USER/OWNER", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }], "body": { "mode": "urlencoded", "urlencoded": [{ "key": "email", "value": "{{email}}", "type": "text" }, { "key": "password", "value": "{{password}}", "type": "text" }] }, "url": "{{baseUrl}}/login", "description": "Postman cookie jar must be enabled. Use a test USER account with owner access; do not export session cookies." }, "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Login completed',()=>pm.expect(pm.response.code).to.be.oneOf([200,302,303]));"] } }] },
+        { "name": "Create room", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"title\": \"Postman CRUD test room\",\n  \"address\": \"10 Test Street\",\n  \"district\": \"Phường Bến Thành\",\n  \"city\": \"Hồ Chí Minh\",\n  \"price\": 2500000,\n  \"area\": 20,\n  \"description\": \"Temporary test listing\",\n  \"imageUrls\": [\"/uploads/rooms/1793809715591-a37ef09dee.jpg\", \"/uploads/rooms/1793809715597-128e79efbb.jpg\", \"/uploads/rooms/1793809715602-68d742f58f.jpg\"],\n  \"available\": true\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/api/rooms" }, "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Room created with 201 and Location',()=>{pm.response.to.have.status(201);pm.expect(pm.response.headers.get('Location')).to.include('/api/rooms/');const b=pm.response.json();pm.collectionVariables.set('roomId',b.id);pm.environment.set('roomId',b.id);pm.collectionVariables.set('ownerId',b.ownerId);pm.environment.set('ownerId',b.ownerId);});"] } }] },
+        { "name": "Read created room", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/rooms/{{roomId}}" }, "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Created room can be read',()=>{pm.response.to.have.status(200);pm.expect(pm.response.json().title).to.eql('Postman CRUD test room');});"] } }] },
+        { "name": "Update created room", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"title\": \"Postman CRUD test room updated\",\n  \"address\": \"10 Test Street\",\n  \"district\": \"Phường Bến Thành\",\n  \"city\": \"Hồ Chí Minh\",\n  \"price\": 2700000,\n  \"area\": 22,\n  \"description\": \"Updated test listing\",\n  \"imageUrls\": [\"/uploads/rooms/1793809715591-a37ef09dee.jpg\", \"/uploads/rooms/1793809715597-128e79efbb.jpg\", \"/uploads/rooms/1793809715602-68d742f58f.jpg\"],\n  \"available\": true\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/api/rooms/{{roomId}}" }, "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Room updated',()=>{pm.response.to.have.status(200);pm.expect(pm.response.json().title).to.eql('Postman CRUD test room updated');});"] } }] },
+        { "name": "Delete created room", "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/rooms/{{roomId}}" }, "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Room deleted with 204',()=>pm.response.to.have.status(204));"] } }] }
+      ]
+    }
+  ]
+}
+

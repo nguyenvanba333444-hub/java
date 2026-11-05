@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Đăng nhập | Trọ Tốt</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 48px 16px; background: #f4f6f4; color: #19251f; font: 16px Arial, sans-serif; }
+        main { width: 100%; max-width: 420px; margin: 5vh auto 0; padding: 30px; background: #fff; border: 1px solid #dfe6e1; border-radius: 14px; }
+        .brand { display: inline-block; margin-bottom: 24px; color: #19251f; font-size: 22px; font-weight: 700; text-decoration: none; }
+        .brand span { color: #216b4c; }
+        h1 { margin: 0 0 8px; font-size: 28px; }
+        .hint { margin: 0 0 22px; color: #617068; line-height: 1.5; }
+        .field { margin: 16px 0; }
+        label { display: block; margin-bottom: 7px; font-size: 14px; font-weight: 700; }
+        input { display: block; width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid #cdd8d0; border-radius: 8px; background: #fff; color: #19251f; font: inherit; }
+        input:focus { outline: 2px solid #9cc6aa; border-color: #216b4c; }
+        button { width: 100%; min-height: 46px; margin-top: 8px; border: 0; border-radius: 8px; background: #216b4c; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+        .message { margin: 14px 0; padding: 11px; border-radius: 8px; line-height: 1.4; }
+        .error { background: #fff0ed; color: #963c31; }
+        .success { background: #edf6ef; color: #216b4c; }
+        .bottom { margin: 20px 0 0; text-align: center; color: #617068; font-size: 14px; }
+        .bottom a { color: #216b4c; font-weight: 700; }
+    </style>
+</head>
+<body>
+<main>
+    <a class="brand" th:href="@{/}">⌂ trọ<span>tốt</span></a>
+    <h1>Đăng nhập</h1>
+    <p class="hint">Chủ trọ và khách thuê đăng nhập tại đây. Admin sẽ được chuyển đến trang quản trị.</p>
+    <p class="message success" th:if="${param.registered}">Tạo tài khoản thành công. Bạn có thể đăng nhập.</p>
+    <p class="message error" th:if="${param.error}">Email hoặc mật khẩu chưa chính xác.</p>
+    <form th:action="@{/login}" method="post">
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="username" required></div>
+        <div class="field"><label for="password">Mật khẩu</label><input id="password" name="password" type="password" autocomplete="current-password" required></div>
+        <button type="submit">Đăng nhập</button>
+    </form>
+    <p class="bottom">Chưa có tài khoản? <a th:href="@{/register}">Đăng ký</a></p>
+</main>
+</body>
+</html>

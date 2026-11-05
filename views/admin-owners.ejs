@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Chủ trọ | Quản trị Trọ Tốt</title>
+  <link rel="stylesheet" href="/public/app.css">
+</head>
+<body class="admin-body">
+  <div class="admin-layout">
+    <%- include('admin-nav',{active:'owners'}) %>
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div><span class="admin-crumb">QUẢN TRỊ <span>/</span> CHỦ TRỌ</span><h1>Danh sách chủ trọ</h1></div>
+        <a class="admin-site-link" href="/">← Trang khách thuê</a>
+      </header>
+      <div class="admin-content">
+        <section class="admin-list-intro">
+          <div><p>Thông tin tài khoản chủ trọ và số tin phòng họ đang đăng.</p></div>
+          <span class="admin-total"><b><%= owners.length %></b> chủ trọ</span>
+        </section>
+        <section class="admin-table-card">
+          <div class="admin-table-toolbar">
+            <label class="admin-search"><span>⌕</span><input id="ownerSearch" type="search" placeholder="Tìm tên, email hoặc số điện thoại…"></label>
+            <span class="admin-toolbar-note">Chủ trọ được nhận diện theo loại tài khoản hoặc tin đã đăng</span>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>CHỦ TRỌ</th><th>SỐ ĐIỆN THOẠI</th><th>EMAIL</th><th>TIN PHÒNG</th><th>ĐANG CÒN PHÒNG</th><th>THAO TÁC</th></tr></thead>
+              <tbody id="ownerRows">
+                <% owners.forEach(owner => { %>
+                  <tr>
+                    <td><div class="admin-user-cell"><span class="admin-avatar"><%= (owner.full_name||'?').slice(0,1).toUpperCase() %></span><span><b><%= owner.full_name %></b><small>Mã chủ trọ #<%= owner.landlord_id %> · tài khoản #<%= owner.id %></small></span></div></td>
+                    <td><%= owner.phone || 'Chưa cập nhật' %></td>
+                    <td><%= owner.email %></td>
+                    <td><span class="admin-pill"><%= owner.room_count %> tin</span></td>
+                    <td><span class="admin-pill pill-green"><%= owner.available_count %> phòng</span></td>
+                    <td><div class="admin-actions"><a href="/manage?ownerId=<%= owner.id %>">Xem tin phòng</a></div></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+            <% if (!owners.length) { %><div class="admin-empty">Chưa có tài khoản chủ trọ hoặc tin phòng nào.</div><% } %>
+            <div class="admin-search-empty" id="emptySearch" hidden>Không tìm thấy chủ trọ phù hợp.</div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <script>
+    const search=document.getElementById('ownerSearch'),rows=[...document.querySelectorAll('#ownerRows tr')],empty=document.getElementById('emptySearch');
+    search.addEventListener('input',()=>{const query=search.value.trim().toLocaleLowerCase('vi');let visible=0;rows.forEach(row=>{const match=row.textContent.toLocaleLowerCase('vi').includes(query);row.hidden=!match;if(match)visible++;});empty.hidden=visible>0||!query;});
+  </script>
+</body>
+</html>

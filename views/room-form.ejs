@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title><%= room?'Sửa tin phòng':'Đăng tin phòng' %> | Trọ Tốt</title><link rel="stylesheet" href="/public/app.css"></head>
+<body><%- include('header') %>
+<main class="container room-editor">
+  <h1><%= room?'Sửa tin phòng':'Đăng tin cho thuê' %></h1>
+  <p class="muted">Chọn địa chỉ từ danh mục hành chính Việt Nam; tải tối thiểu 3 ảnh cho mỗi tin.</p>
+  <% if(error){ %><p class="error"><%= error %></p><% } %>
+  <form class="card pad" method="post" enctype="multipart/form-data" id="roomForm" data-existing-images="<%= room ? room.imageUrls.length : 0 %>" action="<%= room?'/room/'+room.id+'/edit':'/room/new' %>">
+    <label class="field">Tiêu đề<input name="title" maxlength="255" required value="<%= selected.title||room?.title||'' %>"></label>
+    <div class="actions">
+      <label class="field">Tỉnh / thành phố<select name="city" id="city" required data-current="<%= selected.city||room?.city||'' %>"><option value="">Đang tải danh sách tỉnh…</option></select></label>
+      <label class="field">Phường / xã<select name="district" id="ward" required data-current="<%= selected.district||room?.district||'' %>" disabled><option value="">Chọn tỉnh trước</option></select><input class="ward-manual" id="wardManual" name="district" type="text" maxlength="120" placeholder="Nhập phường / xã" required disabled hidden></label>
+    </div>
+    <label class="field">Số nhà, tên đường<input name="address" id="address" maxlength="255" required value="<%= selected.address||room?.address||'' %>" placeholder="Ví dụ: 12 Nguyễn Trãi"></label>
+    <input type="hidden" name="latitude" id="latitude" value="<%= selected.latitude||room?.latitude||'' %>"><input type="hidden" name="longitude" id="longitude" value="<%= selected.longitude||room?.longitude||'' %>">
+    <div class="map-picker"><div class="map-picker-head"><span><b>Vị trí trên bản đồ</b><small id="mapStatus">Nhập địa chỉ rồi chọn “Tìm vị trí”.</small></span><button class="button secondary" type="button" id="findLocation">Tìm vị trí</button></div><iframe id="mapPreview" title="Bản đồ vị trí phòng" loading="lazy" hidden></iframe></div>
+    <div class="actions"><label class="field">Giá thuê / tháng (đ)<input type="number" min="1" step="1" name="price" required value="<%= selected.price||room?.price||'' %>"></label><label class="field">Diện tích (m²)<input type="number" min="1" max="1000000" step="0.5" name="area" required value="<%= selected.area||room?.area||'' %>"></label></div>
+    <label class="field">Mô tả<textarea name="description" maxlength="60000"><%= selected.description||room?.description||'' %></textarea></label>
+    <label class="field">Ảnh phòng (JPG, PNG, GIF, WebP, AVIF)<input id="imageFiles" type="file" name="imageFiles" accept="image/jpeg,image/png,image/gif,image/webp,image/avif" multiple <%= room?'':'required' %>><small id="imageCount" class="muted">Tối thiểu 3 ảnh · tối đa 8 ảnh · mỗi ảnh tối đa 5 MB.</small></label>
+    <% if(room){ %><label class="field"><span><input id="replaceMedia" type="checkbox" name="replaceMedia" value="true" <%= selected.replaceMedia==='true'?'checked':'' %>> Thay toàn bộ ảnh và video hiện tại</span><small class="muted">Mặc định, ảnh/video mới sẽ được thêm vào thư viện hiện tại.</small></label><% } %>
+    <div id="imagePreview" class="media-preview"></div>
+    <label class="field">Video giới thiệu (không bắt buộc)<input id="videoFiles" type="file" name="videoFiles" accept="video/mp4,video/webm,video/quicktime" multiple><small class="muted">Tối đa 2 video MP4, WebM hoặc MOV; mỗi video tối đa 60 MB.</small></label>
+    <% if(room){ %><div class="existing-media"><% (room.mediaUrls||[]).forEach(media=>{ if(media.type==='VIDEO'){ %><video controls preload="metadata" src="<%= media.url %>"></video><% } else { %><img class="thumb" src="<%= media.url %>" alt="Ảnh hiện tại"><% } }) %></div>
+      <label class="field">Tình trạng<select name="available"><option value="true" <%= room.available?'selected':'' %>>Còn phòng</option><option value="false" <%= !room.available?'selected':'' %>>Đã thuê</option></select></label>
+      <% if(user.role==='ADMIN'){ %><label class="field">Chủ trọ<select name="ownerId"><% owners.forEach(owner=>{ %><option value="<%= owner.id %>" <%= owner.id===room.owner_id?'selected':'' %>><%= owner.full_name %> · <%= owner.phone %></option><% }) %></select></label><% } %>
+    <% } else if(user.role==='ADMIN'){ %><label class="field">Chủ trọ<select name="ownerId" required><option value="">Chọn chủ trọ</option><% owners.forEach(owner=>{ %><option value="<%= owner.id %>"><%= owner.full_name %> · <%= owner.phone %></option><% }) %></select></label><% } %>
+    <button class="button">Lưu thông tin</button>
+  </form>
+</main><script src="/public/room-form.js" defer></script></body></html>
